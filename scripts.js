@@ -35,7 +35,8 @@
         return {total, maxTotal, percentage, grau, details, allAnswered};
       }
 
-      document.getElementById('calcBtn').addEventListener('click', ()=>{
+      // Atualiza a UI com o cálculo — usada por listeners automáticos
+      function updateScoresUI(){
         const res = calculateFull();
         document.getElementById('grauCell').textContent = `${res.total.toFixed(2)} / ${res.maxTotal.toFixed(2)} (${res.percentage.toFixed(1)}%) - Grau ${res.grau}`;
         const summary = [];
@@ -44,7 +45,13 @@
           summary.push(`${s}: ${d.sectionScore.toFixed(2)} / ${sectionWeights[s].toFixed(2)}${d.ok? '':' (incompleto)'}`);
         }
         document.getElementById('scoresSummary').innerHTML = summary.join('<br>');
-      });
+      }
+
+      // Calcular automaticamente quando qualquer rádio mudar
+      document.querySelectorAll('input[type="radio"]').forEach(r=> r.addEventListener('change', updateScoresUI));
+
+      // Calcular ao carregar o script
+      updateScoresUI();
 
       document.getElementById('sendWebhook').addEventListener('click', ()=>{
         const res = calculateFull();
@@ -66,11 +73,12 @@
         });
         
         // Enviar para webhook
-        const webhookURL = 'https://cloud.activepieces.com/api/v1/webhooks/PYolUaDZ0aNZ0KKEF1WFg';
+        const webhookURL = 'https://cloud.activepieces.com/api/v1/webhooks/PYolUaDZ0aNZ0KKEF1WFg/sync';
         fetch(webhookURL, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            'x-webhook-secret': 'Agencia435'
           },
           body: JSON.stringify(data)
         })
@@ -86,10 +94,14 @@
         });
       });
 
-      document.getElementById('printBtn').addEventListener('click', ()=>{
-        document.getElementById('calcBtn').click();
-        window.print();
-      });
+      var printBtn = document.getElementById('printBtn');
+      if(printBtn){
+        printBtn.addEventListener('click', ()=>{
+          // garante cálculo atualizado antes de imprimir
+          updateScoresUI();
+          window.print();
+        });
+      }
 
       // Exclusividade APTO / NÃO APTO
       document.getElementById('apto').addEventListener('change', (e)=>{ if(e.target.checked) document.getElementById('naoApto').checked = false; });
