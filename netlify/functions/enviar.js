@@ -1,5 +1,5 @@
 const ACTIVEPIECES_URL = 'https://cloud.activepieces.com/api/v1/webhooks/PYolUaDZ0aNZ0KKEF1WFg/sync';
-const ACTIVEPIECES_SECRET = process.env.ACTIVEPIECES_SECRET || 'defina-no-netlify';
+const ACTIVEPIECES_SECRET = process.env.ACTIVEPIECES_SECRET;
 
 exports.handler = async (event) => {
   if (event.httpMethod !== 'POST') {
