@@ -12,7 +12,7 @@ exports.handler = async (event) => {
   try {
     // Timeout com AbortController
     const controller = new AbortController();
-    const t = setTimeout(() => controller.abort(), 30000);
+    const t = setTimeout(() => controller.abort(), 60000);
 
     // Opcional: validação leve (ex.: tamanho máximo)
     if (!event.body || event.body.length > 200_000) {
